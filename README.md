@@ -1,4 +1,4 @@
-#AI Socratic Tutor which uses RAG
+# AI Socratic Tutor which uses RAG
 
 Currently doing a prototype but will improve it when as time goes
 
@@ -13,19 +13,19 @@ R- Retrieval
 A- Augmented
 G- Generation
 
-#What we do is basically this:
+# What we do is basically this:
 1.) First create embeds of the sources we provide and also of the question
 2.) Use vector dot product and find the max value of the embed matrix which means just finding out the most appropriate source out of the given ones
 3.) Feed the retrieved data to the AI so that it'll read the pre-defined context and the new data
 4.) Use the data to generate proper answer
 
-#What I have done:
+# What I have done:
 
 1.) Created a very basic GUI using customtkinter which includes an entry widget, scrollable frame and the ability to stream the ai responses.
 2.) Used ollama to pull a local LLM. Currently using gemma3:4b
 3.) Completed the RAG algorithm but just the base level logic to make AI retrieve the sources
 
-#How to do it?
+# How to do it?
 
 You yourself can easily do this project by first downloading ollama [ LINK: https://ollama.com/download/windows ]
 
