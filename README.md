@@ -1,9 +1,9 @@
 # AI Socratic Tutor which uses RAG
-Currently doing a prototype but hope to improve it once I improve as a programmer
+Currently doing a prototype but will improve it when as time goes
 
 Socratic AI Tutor refers to an AI tutor which aims to help the student to understand the underlying concept and make them capable of reasoning with the concept instead of just blindly checking for the answer.
 
-The RAG part of this project is just an AI technique which helps the AI to read sources fed to it and then generate answers appropriately instead of giving half assed answers without understanding what it itself is saying and using its own metrics to weigh the importance of the sources it has
+The RAG part of this project is just an AI technique which helps the AI to read sources fed to it and then generate answers appropriately instead of giving irrelevant answers without understanding what it itself is saying and using its own metrics to weigh the importance of the sources it has
 
 Full form of RAG is:
 R- Retrieval
