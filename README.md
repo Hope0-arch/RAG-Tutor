@@ -1,53 +1,69 @@
-# AI Socratic Tutor which uses RAG
-Currently doing a prototype but will improve it when as time goes
+# Socrates — AI Tutor using Retrieval-Augmented Generation (RAG)
 
-Socratic AI Tutor refers to an AI tutor wh uhhich aims . to help the student to understand the underlying concept and make them capable of reasoning with the concept instead of just blindly checking for the answer.
+Socrates is a prototype AI tutor designed to help students understand concepts and reason through problems instead of simply giving them final answers.
 
-This was made possible by the ollama software. OLLAMA has been used here to download and run llms locally in our laptop/desktop. I have given the instructions to download and run your llms using ollam.
+The project combines a **Socratic-style tutoring approach** with **Retrieval-Augmented Generation (RAG)** so that the AI can use trusted study material, such as textbooks and PDFs, while answering academic questions.
 
-The RAG part of this project is just an AI technique which helps the AI to read sources fed to it and then generate answers appropriately instead of giving irrelevant answers without understanding what it itself is saying and using its own metrics to weigh the importance of the sources it has
+The application currently runs locally using **Ollama**, meaning the language models can run directly on the user's computer without requiring a cloud API.
 
-Full form of RAG is:
-R- Retrieval
-A- Augmented
-G- Generation
+---
 
- What we do is basically this:
-   1.) First create embeds of the sources we provide and also of the question
-   2.) Use vector dot product and find the max value of the embed matrix which means just finding out the most appropriate source out of the given ones
-   3.) Feed the retrieved data to the AI so that it'll read the pre-defined context and the new data
-   4.) Use the data to generate proper answer
+## Why this project?
 
-# What I have done:
-1.) Created a very basic GUI using customtkinter which includes an entry widget, scrollable frame and the ability to stream the ai responses.
-2.) Used ollama to pull a local LLM. Currently using gemma3:4b 
-3.) Completed the RAG algorithm but just the base level logic to make AI retrieve the sources
+Large Language Models can generate very convincing responses, but those responses are not always accurate or grounded in the student's actual study material.
 
+They may:
 
-# How to do it?
-  You yourself can easily do this project by first downloading ollama [ LINK: https://ollama.com/download/windows ]
+- Give unsupported or incorrect information
+- Answer using general knowledge instead of the student's course material
+- Provide the final answer without helping the student understand the reasoning
+- Make assumptions that were never stated by the user
 
-  STEP 1:
-   After downloading ollama enter this command into the terminal:
-    
-     ollama pull gemma3:4b { 3.3 GB SIZE }
-     ollama pull embeddinggemma { 621 MB SIZE }
-    
-   currently I'm using this LLM but remember to find an LLM which suits your project and your hardware!!
+Socrates attempts to reduce these problems by combining:
 
-  STEP 2:
-   Install these python libraries ( Choose based on your project but these are small stuff)
-           
-           pip install customtkinter
-           pip install ollama
-           pip install pypdf
-  STEP 3:
-   Just try to learn customtkinter till what you feel is best for you cause it's currently the best for rapid prototyping in my honest opinion 
+- A tutoring-oriented system prompt
+- Conversation memory
+- Retrieval from trusted study documents
+- Local language models
 
+The goal is not to claim that hallucinations are completely eliminated, but to create a tutor that is **more grounded, transparent and useful for learning**.
 
-  STEO 4: PLEASE UNDERSTAND WHAT THE CODE IS DOING AND WHAT ALGORITHM YOU ARE TYPING, The RAG algorithm is very simple but it'll be a bit confusing so don't worry if you don't get it first try
-  
-  
+---
 
-  
-  
+# What is RAG?
+
+**RAG** stands for:
+
+- **R — Retrieval**
+- **A — Augmented**
+- **G — Generation**
+
+Retrieval-Augmented Generation allows an AI system to retrieve relevant information from an external knowledge source before generating its response.
+
+In this project, the knowledge source is currently a PDF supplied by the user.
+
+The basic pipeline is:
+
+```text
+Study PDF
+    ↓
+Extract text
+    ↓
+Split text into overlapping chunks
+    ↓
+Create embeddings for each chunk
+    ↓
+
+User Question
+    ↓
+Create question embedding
+    ↓
+
+Compare question embedding
+with document embeddings
+    ↓
+Retrieve the most relevant chunks
+    ↓
+Add retrieved information to the LLM context
+    ↓
+Generate the final response
