@@ -32,15 +32,15 @@ You yourself can easily do this project by first downloading ollama [ LINK: http
 STEP 1:
 After downloading ollama enter this command into the terminal:
 
-ollama pull gemma3:4b { 3.3 GB SIZE }  
- ollama pull embeddinggemma { 621 MB SIZE }
+    ollama pull gemma3:4b { 3.3 GB SIZE }  
+     ollama pull embeddinggemma { 621 MB SIZE }
 
 currently I'm using this LLM but remember to find an LLM which suits your project and your hardware!!
 
 STEP 2:
 Install these python libraries ( Choose based on your project but these are small stuff)
 
-pip install customtkinter  
+       pip install customtkinter  
        pip install ollama  
        pip install pypdf
 
