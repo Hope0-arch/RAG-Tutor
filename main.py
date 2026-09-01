@@ -7,7 +7,6 @@ import ollama as olm
 import re
 import rag_algorithm
 
-
 records = rag_algorithm.reader(
     r"C:\Users\aurob\Downloads\NCERT-Class-11-Physics-Part-1.pdf"
 )
