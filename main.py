@@ -2,25 +2,22 @@
 import customtkinter as ctk
 from tkinter import *
 from tkinter import messagebox, filedialog
-from PIL import Image
 import threading
 import ollama as olm
 import re
-import time
-import pyttsx3
-import speech_recognition as sr
-import requests
 import rag_algorithm
 
 
-records = rag_algorithm.reader(r"C:\Users\aurob\Downloads\NCERT-Class-11-Physics-Part-1.pdf")
+records = rag_algorithm.reader(
+    r"C:\Users\aurob\Downloads\NCERT-Class-11-Physics-Part-1.pdf"
+)
 
-rec_arr= rag_algorithm.create_embeddings(records)
-messages = [
-    {
-        "role": "system",
-        "content": """
-Your name is Socrates. You are a friendly AI companion and tutor.
+rec_arr = rag_algorithm.load_or_create_embeddings(
+    records,
+    "physics_embeddings.npy"
+)
+
+SYSTEM_PROMPT="""Your name is Socrates. You are a friendly AI companion and tutor.
 
 For ordinary conversation — life, sports, games, music, hobbies, jokes,
 opinions, or random topics — speak naturally and casually, with a small
@@ -51,10 +48,28 @@ Only resume the lesson when they want to continue.
 
 Simply mentioning a topic does not automatically mean they want tutoring.
 
-Never invent facts. If uncertain, say so.
+Never claim that the user said, knows, likes, did, or believes something
+unless it is actually present in the conversation.
+
+Never invent personal details about people mentioned by the user.
+
+If you make an inference, clearly identify it as an inference.
+
+If asked how you know something, check the conversation and retrieved material.
+If there is no evidence, say that you do not know instead of inventing an explanation.
+
+Never state that the student calculated, understood, answered, or discovered something unless their latest messages explicitly contain it.
 """
+
+
+messages = [
+    {
+        "role": "system",
+        "content": SYSTEM_PROMPT
+
     }
 ]
+
 
 
 win = ctk.CTk()
@@ -98,6 +113,12 @@ def get_ai_response(ai_prompt, user_text):
         rec_arr,
         3
     )
+    for result in context:
+        print("\n-------------------------")
+        print("SOURCE:", result["source"])
+        print("PAGE:", result["page"])
+        print("SCORE:", result["score"])
+        print(result["text"])
 
     retrieved_text = ""
 
@@ -110,17 +131,30 @@ Page: {result["page"]}
 
 """
 
-    rag_message = {
+    combined_message = {
         "role": "system",
         "content": f"""
-The following text was retrieved from the student's study material.
+{SYSTEM_PROMPT}
 
-Use it as the primary factual reference IF it is relevant to the student's
-current question.
+GROUNDING RULES:
 
-Do not invent information that is not supported by the material.
-If the material is unrelated or insufficient, do not pretend that it answers
-the question.
+The following material was retrieved from the student's study material.
+
+Use it as the primary factual source when it is relevant.
+
+Do not invent details that are absent from the retrieved material.
+Do not claim the material contains something unless it actually does.
+If the retrieved information is insufficient, explicitly say that.
+
+For a problem-solving request, do not immediately dump the complete solution.
+Guide the student through one meaningful step at a time.
+
+For a request to explain or describe something, a direct explanation is allowed.
+
+At the end of an academic response, state:
+Source: <filename>, page <page>
+
+Use only source/page information provided in the retrieved material.
 
 RETRIEVED MATERIAL:
 
@@ -129,15 +163,15 @@ RETRIEVED MATERIAL:
     }
 
     request_message = (
-        messages[:-1]
-        + [rag_message]
+        [combined_message]
+        + messages[1:-1]
         + [messages[-1]]
     )
-
     stream = olm.chat(
         model="gemma3:4b",
         messages=request_message,
-        stream=True
+        stream=True,
+        options={"temperature":0.2}
     )
 
     full_response = ""
