@@ -59,7 +59,9 @@ def create_embeddings(records, batch_size=32):
 
         response = olm.embed(
             model="embeddinggemma",
-            input=texts
+            input=texts,
+            options={"num_gpu": 0}
+
         )
 
         vectors.extend(response["embeddings"])
@@ -99,7 +101,8 @@ def embv(question, records, rec_arr, top_k):
 
     qstn = olm.embed(
         model="embeddinggemma",
-        input=question
+        input=question,
+        options={"num_gpu": 0}
     )
 
     qstn_arr = np.array(
