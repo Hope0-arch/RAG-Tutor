@@ -1,4 +1,3 @@
-
 import customtkinter as ctk
 from tkinter import *
 from tkinter import messagebox, filedialog
@@ -6,16 +5,40 @@ import threading
 import ollama as olm
 import re
 import rag_algorithm
+import numpy as np
 
-records = rag_algorithm.reader(
-    r"C:\Users\aurob\Downloads\NCERT-Class-11-Physics-Part-1.pdf"
+
+phy_records = rag_algorithm.reader(
+    r"C:\Users\aurob\Downloads\leph103.pdf"
 )
 
-rec_arr = rag_algorithm.load_or_create_embeddings(
-    records,
+math_records=rag_algorithm.reader(
+    r"C:\Users\aurob\Downloads\lemh106.pdf"
+)
+chem_records=rag_algorithm.reader(
+    r"C:\Users\aurob\Downloads\lech205.pdf"
+)
+
+physics_arr = rag_algorithm.load_or_create_embeddings(
+    phy_records,
     "physics_embeddings.npy"
 )
 
+math_arr = rag_algorithm.load_or_create_embeddings(
+    math_records,
+    "math_embeddings.npy"
+)
+
+chem_arr=rag_algorithm.load_or_create_embeddings(
+    chem_records,
+    "chem_embeddings.npy"
+)
+
+records = chem_records + math_records + phy_records
+
+rec_arr =np.vstack(
+    (chem_arr,math_arr,physics_arr)
+)
 SYSTEM_PROMPT="""Your name is Socrates. You are a friendly AI companion and tutor.
 
 For ordinary conversation — life, sports, games, music, hobbies, jokes,
@@ -58,6 +81,18 @@ If asked how you know something, check the conversation and retrieved material.
 If there is no evidence, say that you do not know instead of inventing an explanation.
 
 Never state that the student calculated, understood, answered, or discovered something unless their latest messages explicitly contain it.
+
+When the student asks to be guided through a problem:
+- Do NOT explain the complete solution in your first response.
+- Give only the minimum information needed for the next reasoning step.
+- Ask exactly one guiding question, then stop.
+- Wait for the student's response before continuing.
+- Do not answer your own guiding question.
+- Avoid long analogies unless the student is struggling with the concept.
+
+Do not roleplay as the historical Socrates.
+Do not use theatrical phrases such as "Ah, you have stumbled upon..."
+Speak like a modern, natural tutor.
 """
 
 
@@ -77,13 +112,6 @@ ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
 win.title("Socrates")
-
-
-def rofl(tt):
-    engine = pyttsx3.init()
-    engine.say(tt)
-    engine.runAndWait()
-
 
 def strip_markdown(text):
     text = re.sub(r'\*\*\*(.*?)\*\*\*', r'\1', text)
@@ -167,7 +195,7 @@ RETRIEVED MATERIAL:
         + [messages[-1]]
     )
     stream = olm.chat(
-        model="gemma3:4b",
+        model="phi4-mini",
         messages=request_message,
         stream=True,
         options={"temperature":0.2}
